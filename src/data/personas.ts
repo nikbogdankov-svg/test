@@ -106,7 +106,7 @@ export const personas: Persona[] = [
     avatarInitials: "GL",
     avatarColor: "#0F766E",
     homePath: "/catalog",
-    navKeys: ["catalog", "requests", "teams", "settings"],
+    navKeys: ["catalog", "requests"],
     capabilities: {
       canRegister: false,
       canImport: true,
@@ -135,7 +135,7 @@ export const personas: Persona[] = [
     avatarInitials: "CD",
     avatarColor: "#4B5563",
     homePath: "/catalog",
-    navKeys: ["catalog", "requests", "audit", "teams", "settings"],
+    navKeys: ["catalog", "requests", "audit"],
     capabilities: {
       canRegister: false,
       canImport: false,

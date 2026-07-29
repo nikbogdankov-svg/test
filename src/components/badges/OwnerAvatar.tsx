@@ -11,6 +11,7 @@ import type { Owner } from "@/types/catalog";
 interface OwnerAvatarProps {
   owner: Owner;
   showName?: boolean;
+  subtitle?: string;
   className?: string;
   size?: "sm" | "md";
 }
@@ -18,6 +19,7 @@ interface OwnerAvatarProps {
 export function OwnerAvatar({
   owner,
   showName = true,
+  subtitle,
   className,
   size = "sm",
 }: OwnerAvatarProps) {
@@ -35,9 +37,16 @@ export function OwnerAvatar({
               </AvatarFallback>
             </Avatar>
             {showName ? (
-              <span className="truncate text-sm text-neutral-800">
-                {owner.name}
-              </span>
+              <div className="min-w-0">
+                <p className="truncate text-sm text-neutral-800">
+                  {owner.name}
+                </p>
+                {subtitle ? (
+                  <p className="truncate text-xs text-neutral-500">
+                    {subtitle}
+                  </p>
+                ) : null}
+              </div>
             ) : null}
           </div>
         </TooltipTrigger>

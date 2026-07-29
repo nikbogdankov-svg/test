@@ -74,7 +74,7 @@ export function TopBar() {
             <Button
               variant="ghost"
               size="icon"
-              className="relative"
+              className="relative focus:bg-neutral-100 focus-visible:bg-neutral-100 data-[state=open]:bg-neutral-100"
               aria-label="Notifications"
             >
               <Bell className="h-4 w-4" />

@@ -8,9 +8,7 @@ import {
   FileSearch,
   MessageSquareText,
   PanelLeftClose,
-  Settings,
   Shield,
-  Users,
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,10 +22,8 @@ const navItems: { key: NavKey; href: string; label: string; icon: LucideIcon }[]
   [
     { key: "ask", href: "/ask", label: "Ask", icon: MessageSquareText },
     { key: "catalog", href: "/catalog", label: "Data Catalog", icon: BookOpen },
-    { key: "requests", href: "/requests", label: "Requests", icon: FileSearch },
+    { key: "requests", href: "/requests", label: "Access", icon: FileSearch },
     { key: "audit", href: "/audit", label: "Audit Logs", icon: Shield },
-    { key: "teams", href: "/teams", label: "Teams", icon: Users },
-    { key: "settings", href: "/settings", label: "Settings", icon: Settings },
   ];
 
 export function Sidebar() {

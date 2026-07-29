@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,8 +20,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { teams } from "@/data/users";
-import { submitGeneralAccessRequest } from "@/mock/api";
+import { usePersona } from "@/hooks/usePersona";
+import { requestableDatasetsForPersona } from "@/lib/peopleAccess";
+import { submitAccessRequest } from "@/mock/api";
 
 interface RequestDatasetAccessDialogProps {
   trigger?: React.ReactNode;
@@ -30,20 +31,28 @@ interface RequestDatasetAccessDialogProps {
 export function RequestDatasetAccessDialog({
   trigger,
 }: RequestDatasetAccessDialogProps) {
+  const { persona } = usePersona();
   const [open, setOpen] = useState(false);
-  const [department, setDepartment] = useState("unknown");
+  const [datasetId, setDatasetId] = useState("");
   const [role, setRole] = useState("Viewer");
-  const [need, setNeed] = useState("");
+  const [reason, setReason] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submittedId, setSubmittedId] = useState<string | null>(null);
 
+  const requestable = useMemo(
+    () => requestableDatasetsForPersona(persona),
+    [persona]
+  );
+
+  const selected = requestable.find((dataset) => dataset.id === datasetId);
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if (!need.trim()) return;
+    if (!datasetId || !reason.trim()) return;
     setSubmitting(true);
-    const result = await submitGeneralAccessRequest({
-      department: department === "unknown" ? undefined : department,
-      reason: need.trim(),
+    const result = await submitAccessRequest({
+      datasetId,
+      reason: reason.trim(),
       requestedRole: role,
     });
     setSubmitting(false);
@@ -57,9 +66,9 @@ export function RequestDatasetAccessDialog({
         setOpen(next);
         if (!next) {
           setSubmittedId(null);
-          setNeed("");
+          setReason("");
           setRole("Viewer");
-          setDepartment("unknown");
+          setDatasetId("");
         }
       }}
     >
@@ -75,46 +84,34 @@ export function RequestDatasetAccessDialog({
         <DialogHeader>
           <DialogTitle>Request dataset access</DialogTitle>
           <DialogDescription>
-            Describe the data you need, even if it is owned by another
-            department. Owners will review your request before granting access.
+            Access is granted per dataset only. Pick the dataset you need and
+            the role required for your use case.
           </DialogDescription>
         </DialogHeader>
 
         {submittedId ? (
           <div className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-3 text-sm text-emerald-800">
-            Request submitted ({submittedId}). The owning department will review
-            it and notify you when access is granted or denied.
+            Request submitted for {selected?.name ?? "dataset"} ({submittedId}).
+            The owning department will review it before granting access.
           </div>
+        ) : requestable.length === 0 ? (
+          <p className="text-sm text-neutral-600">
+            There are no additional datasets available to request right now.
+          </p>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="access-need">What do you need?</Label>
-              <textarea
-                id="access-need"
-                required
-                value={need}
-                onChange={(event) => setNeed(event.target.value)}
-                rows={5}
-                placeholder="Example: Parking violation records for a Citizen Services RAG assistant answering fine-status questions. Need Viewer access for the last 24 months."
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus-visible:outline-none focus-visible:ring-0"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="access-department">Department (optional)</Label>
-              <Select value={department} onValueChange={setDepartment}>
-                <SelectTrigger id="access-department" className="w-full">
-                  <SelectValue placeholder="I don’t know yet" />
+              <Label htmlFor="access-dataset">Dataset</Label>
+              <Select value={datasetId} onValueChange={setDatasetId}>
+                <SelectTrigger id="access-dataset" className="w-full">
+                  <SelectValue placeholder="Select a dataset" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="unknown">I don’t know yet</SelectItem>
-                  {teams
-                    .filter((team) => team.name !== "Executive Office")
-                    .map((team) => (
-                      <SelectItem key={team.id} value={team.name}>
-                        {team.name}
-                      </SelectItem>
-                    ))}
+                  {requestable.map((dataset) => (
+                    <SelectItem key={dataset.id} value={dataset.id}>
+                      {dataset.name} · {dataset.owner.team}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -128,9 +125,21 @@ export function RequestDatasetAccessDialog({
                 <SelectContent>
                   <SelectItem value="Viewer">Viewer</SelectItem>
                   <SelectItem value="Editor">Editor</SelectItem>
-                  <SelectItem value="Service Reader">Service Reader</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="access-reason">Business justification</Label>
+              <textarea
+                id="access-reason"
+                required
+                value={reason}
+                onChange={(event) => setReason(event.target.value)}
+                rows={4}
+                placeholder="Example: Need Viewer access to Building Permits for an Urban Planning model validating construction timelines."
+                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus-visible:outline-none focus-visible:ring-0"
+              />
             </div>
 
             <DialogFooter>
@@ -141,7 +150,10 @@ export function RequestDatasetAccessDialog({
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={submitting || !need.trim()}>
+              <Button
+                type="submit"
+                disabled={submitting || !datasetId || !reason.trim()}
+              >
                 {submitting ? "Submitting…" : "Submit request"}
               </Button>
             </DialogFooter>

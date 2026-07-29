@@ -232,9 +232,7 @@ export type NavKey =
   | "ask"
   | "catalog"
   | "requests"
-  | "audit"
-  | "teams"
-  | "settings";
+  | "audit";
 
 export interface PersonaCapabilities {
   canRegister: boolean;
