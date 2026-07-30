@@ -5,7 +5,6 @@ import { useMemo, useRef, useState } from "react";
 import { ArrowUp, Quote } from "lucide-react";
 import { askExamples, type AskExample } from "@/data/askExamples";
 import { usePersona } from "@/hooks/usePersona";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -100,30 +99,25 @@ export function AskPanel() {
                     <p className="text-xs text-neutral-500">
                       {turn.example.permissionNote}
                     </p>
-                    <ul className="space-y-2">
+                    <ul className="space-y-1 border-l border-neutral-200 pl-3">
                       {turn.example.citations.map((citation) => (
                         <li
                           key={`${turn.id}-${citation.datasetId}`}
-                          className="rounded-xl border border-neutral-200 bg-white px-3 py-2"
+                          className="text-sm text-neutral-400"
                         >
-                          <div className="flex flex-wrap items-center justify-between gap-2">
-                            {persona.navKeys.includes("catalog") ? (
-                              <Link
-                                href={`/catalog/${citation.datasetId}`}
-                                className="text-sm font-medium text-neutral-900 hover:underline"
-                              >
-                                {citation.datasetName}
-                              </Link>
-                            ) : (
-                              <span className="text-sm font-medium text-neutral-900">
-                                {citation.datasetName}
-                              </span>
-                            )}
-                            <Badge variant="success">Cited source</Badge>
-                          </div>
-                          <p className="mt-1 text-xs text-neutral-500">
-                            {citation.note}
-                          </p>
+                          {persona.navKeys.includes("catalog") ? (
+                            <Link
+                              href={`/catalog/${citation.datasetId}`}
+                              className="font-medium text-neutral-600 hover:text-neutral-900 hover:underline"
+                            >
+                              {citation.datasetName}
+                            </Link>
+                          ) : (
+                            <span className="font-medium text-neutral-600">
+                              {citation.datasetName}
+                            </span>
+                          )}
+                          <span> · {citation.note}</span>
                         </li>
                       ))}
                     </ul>

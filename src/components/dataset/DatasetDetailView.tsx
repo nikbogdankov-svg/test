@@ -36,13 +36,6 @@ function isTab(value: string | null): value is TabId {
   return !!value && (tabs as readonly string[]).includes(value);
 }
 
-function defaultTabForRole(role: PersonaRole): TabId {
-  if (role === "compliance_officer") return "audit";
-  if (role === "ai_engineer") return "schema";
-  if (role === "data_scientist") return "quality";
-  return "overview";
-}
-
 function tabsForRole(role: PersonaRole): TabId[] {
   if (role === "mayor") return ["overview", "quality"];
   if (role === "compliance_officer") {
@@ -60,9 +53,7 @@ export function DatasetDetailView({ dataset }: { dataset: Dataset }) {
   const { persona } = usePersona();
   const availableTabs = tabsForRole(persona.role);
   const tabParam = searchParams.get("tab");
-  const initialTab: TabId = isTab(tabParam)
-    ? tabParam
-    : defaultTabForRole(persona.role);
+  const initialTab: TabId = isTab(tabParam) ? tabParam : "overview";
   const [tab, setTab] = useState<TabId>(
     availableTabs.includes(initialTab) ? initialTab : availableTabs[0]
   );
