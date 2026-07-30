@@ -22,6 +22,13 @@ const tones: Record<DatasetType, string> = {
   vector_collection: "bg-emerald-50 text-emerald-700 border-emerald-200",
 };
 
+const labels: Record<DatasetType, string> = {
+  table: "Table",
+  document: "Document",
+  pipeline: "Pipeline",
+  vector_collection: "Vector collection",
+};
+
 export function DatasetTypeIcon({
   type,
   className,
@@ -33,12 +40,13 @@ export function DatasetTypeIcon({
   return (
     <div
       className={cn(
-        "flex h-8 w-8 shrink-0 items-center justify-center rounded-md border",
+        "inline-flex shrink-0 items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-medium leading-none whitespace-nowrap",
         tones[type],
         className
       )}
     >
-      <Icon className="h-4 w-4" />
+      <Icon className="h-3 w-3" aria-hidden="true" />
+      <span>{labels[type]}</span>
     </div>
   );
 }

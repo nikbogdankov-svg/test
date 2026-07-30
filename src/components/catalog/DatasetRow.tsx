@@ -8,6 +8,7 @@ import { OwnerAvatar } from "@/components/badges/OwnerAvatar";
 import { PermissionBadge } from "@/components/badges/PermissionBadge";
 import { QualityBadge } from "@/components/badges/QualityBadge";
 import { TrustBadge } from "@/components/badges/TrustBadge";
+import { DatasetTypeIcon } from "@/components/catalog/DatasetTypeIcon";
 import { HighlightText } from "@/components/catalog/HighlightText";
 import { Badge } from "@/components/ui/badge";
 import { formatRelative } from "@/lib/format";
@@ -38,9 +39,7 @@ export function DatasetRow({ dataset, query }: DatasetRowProps) {
                 <Badge variant="danger">PII</Badge>
               ) : null}
             </div>
-            <p className="mt-0.5 text-xs text-neutral-500 capitalize">
-              {dataset.type.replace("_", " ")}
-            </p>
+            <DatasetTypeIcon type={dataset.type} className="mt-1.5" />
           </div>
         </Link>
       </td>

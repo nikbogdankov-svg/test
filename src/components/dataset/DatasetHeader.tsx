@@ -13,6 +13,7 @@ import { CertificationBadge } from "@/components/badges/CertificationBadge";
 import { OwnerAvatar } from "@/components/badges/OwnerAvatar";
 import { PermissionBadge } from "@/components/badges/PermissionBadge";
 import { TrustBadge } from "@/components/badges/TrustBadge";
+import { DatasetTypeIcon } from "@/components/catalog/DatasetTypeIcon";
 import { RequestAccessDialog } from "@/components/dataset/RequestAccessDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -76,6 +77,7 @@ export function DatasetHeader({ dataset }: DatasetHeaderProps) {
                 <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
                   {dataset.name}
                 </h1>
+                <DatasetTypeIcon type={dataset.type} />
                 <CertificationBadge status={dataset.certification} />
                 <TrustBadge level={dataset.trust} />
                 <PermissionBadge level={myPermission} />
