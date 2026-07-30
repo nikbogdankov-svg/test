@@ -19,7 +19,7 @@ const tones: Record<DatasetType, string> = {
   table: "bg-sky-50 text-sky-700 border-sky-200",
   document: "bg-amber-50 text-amber-700 border-amber-200",
   pipeline: "bg-violet-50 text-violet-700 border-violet-200",
-  vector_collection: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  vector_collection: "bg-rose-50 text-rose-700 border-rose-200",
 };
 
 const labels: Record<DatasetType, string> = {
