@@ -42,7 +42,6 @@ interface EditPersonAccessDialogProps {
   grants: PersonDatasetAccess[];
   focusDatasetId?: string;
   onGrant: (grants: PersonDatasetAccess[], resolvedRequestIds: string[]) => void;
-  onDeny: (resolvedRequestIds: string[]) => void;
 }
 
 export function EditPersonAccessDialog({
@@ -52,7 +51,6 @@ export function EditPersonAccessDialog({
   grants,
   focusDatasetId,
   onGrant,
-  onDeny,
 }: EditPersonAccessDialogProps) {
   const [draft, setDraft] = useState<PersonDatasetAccess[]>([]);
   const [comment, setComment] = useState("");
@@ -169,13 +167,6 @@ export function EditPersonAccessDialog({
     if (!profile) return;
     void comment;
     onGrant(draft, resolveIdsForDecision());
-    onOpenChange(false);
-  }
-
-  function handleDeny() {
-    if (!profile) return;
-    void comment;
-    onDeny(resolveIdsForDecision());
     onOpenChange(false);
   }
 
@@ -337,11 +328,15 @@ export function EditPersonAccessDialog({
         </div>
 
         <DialogFooter>
-          <Button type="button" variant="secondary" onClick={handleDeny}>
-            Deny access
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => onOpenChange(false)}
+          >
+            Cancel
           </Button>
           <Button type="button" onClick={handleGrant}>
-            Grant access
+            Save
           </Button>
         </DialogFooter>
       </DialogContent>

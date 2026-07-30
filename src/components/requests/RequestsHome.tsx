@@ -210,11 +210,6 @@ export function RequestsHome() {
               ...new Set([...current, ...resolvedIds]),
             ]);
           }}
-          onDeny={(resolvedIds) => {
-            setResolvedRequestIds((current) => [
-              ...new Set([...current, ...resolvedIds]),
-            ]);
-          }}
         />
       ) : null}
     </div>

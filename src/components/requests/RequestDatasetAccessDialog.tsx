@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,9 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { usePersona } from "@/hooks/usePersona";
-import { requestableDatasetsForPersona } from "@/lib/peopleAccess";
-import { submitAccessRequest } from "@/mock/api";
+import { teams } from "@/data/users";
+import { submitGeneralAccessRequest } from "@/mock/api";
 
 interface RequestDatasetAccessDialogProps {
   trigger?: React.ReactNode;
@@ -31,29 +30,21 @@ interface RequestDatasetAccessDialogProps {
 export function RequestDatasetAccessDialog({
   trigger,
 }: RequestDatasetAccessDialogProps) {
-  const { persona } = usePersona();
   const [open, setOpen] = useState(false);
-  const [datasetId, setDatasetId] = useState("");
+  const [department, setDepartment] = useState("");
   const [role, setRole] = useState("Viewer");
   const [reason, setReason] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submittedId, setSubmittedId] = useState<string | null>(null);
 
-  const requestable = useMemo(
-    () => requestableDatasetsForPersona(persona),
-    [persona]
-  );
-
-  const selected = requestable.find((dataset) => dataset.id === datasetId);
-
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if (!datasetId || !reason.trim()) return;
+    if (!reason.trim()) return;
     setSubmitting(true);
-    const result = await submitAccessRequest({
-      datasetId,
+    const result = await submitGeneralAccessRequest({
       reason: reason.trim(),
       requestedRole: role,
+      department: department || undefined,
     });
     setSubmitting(false);
     setSubmittedId(result.requestId);
@@ -68,7 +59,7 @@ export function RequestDatasetAccessDialog({
           setSubmittedId(null);
           setReason("");
           setRole("Viewer");
-          setDatasetId("");
+          setDepartment("");
         }
       }}
     >
@@ -84,32 +75,35 @@ export function RequestDatasetAccessDialog({
         <DialogHeader>
           <DialogTitle>Request dataset access</DialogTitle>
           <DialogDescription>
-            Access is granted per dataset only. Pick the dataset you need and
-            the role required for your use case.
+            Describe what you need and the role required for your use case. You
+            can optionally suggest a department.
           </DialogDescription>
         </DialogHeader>
 
         {submittedId ? (
           <div className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-3 text-sm text-emerald-800">
-            Request submitted for {selected?.name ?? "dataset"} ({submittedId}).
-            The owning department will review it before granting access.
+            Request submitted
+            {department ? ` for ${department}` : ""} ({submittedId}). The
+            owning department will review it before granting access.
           </div>
-        ) : requestable.length === 0 ? (
-          <p className="text-sm text-neutral-600">
-            There are no additional datasets available to request right now.
-          </p>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="access-dataset">Dataset</Label>
-              <Select value={datasetId} onValueChange={setDatasetId}>
-                <SelectTrigger id="access-dataset" className="w-full">
-                  <SelectValue placeholder="Select a dataset" />
+              <Label htmlFor="access-department">
+                Possible department{" "}
+                <span className="font-normal text-neutral-400">(optional)</span>
+              </Label>
+              <Select
+                value={department || undefined}
+                onValueChange={setDepartment}
+              >
+                <SelectTrigger id="access-department" className="w-full">
+                  <SelectValue placeholder="Select a department" />
                 </SelectTrigger>
                 <SelectContent>
-                  {requestable.map((dataset) => (
-                    <SelectItem key={dataset.id} value={dataset.id}>
-                      {dataset.name} · {dataset.owner.team}
+                  {teams.map((team) => (
+                    <SelectItem key={team.id} value={team.name}>
+                      {team.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -150,10 +144,7 @@ export function RequestDatasetAccessDialog({
               >
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                disabled={submitting || !datasetId || !reason.trim()}
-              >
+              <Button type="submit" disabled={submitting || !reason.trim()}>
                 {submitting ? "Submitting…" : "Submit request"}
               </Button>
             </DialogFooter>
