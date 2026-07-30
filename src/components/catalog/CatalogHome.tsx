@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { Upload, Plus, MessageSquareText } from "lucide-react";
+import { Plus, MessageSquareText } from "lucide-react";
 import { motion } from "framer-motion";
 import { CatalogFilters } from "@/components/catalog/CatalogFilters";
 import { DatasetTable } from "@/components/catalog/DatasetTable";
@@ -49,12 +49,6 @@ export function CatalogHome() {
         <div className="col-span-12 flex flex-wrap gap-2 lg:col-span-4 lg:justify-end">
           {persona.capabilities.canRequestAccess ? (
             <RequestDatasetAccessDialog />
-          ) : null}
-          {persona.capabilities.canImport ? (
-            <Button variant="secondary">
-              <Upload className="h-4 w-4" />
-              Import Metadata
-            </Button>
           ) : null}
           {persona.capabilities.canRegister ? (
             <Button variant="secondary">

@@ -19,9 +19,9 @@ export function TrustBadge({ level }: { level: TrustLevel }) {
   const item = config[level];
   const Icon = item.icon;
   return (
-    <Badge variant={item.variant} className="gap-1">
-      <Icon className="h-3 w-3" />
-      {item.label}
+    <Badge variant={item.variant} className="gap-1 align-middle">
+      <Icon className="block h-3 w-3 shrink-0" aria-hidden="true" />
+      <span>{item.label}</span>
     </Badge>
   );
 }
