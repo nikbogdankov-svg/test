@@ -305,22 +305,9 @@ function PendingRequestRow({
         />
         <Badge variant="warning">{request.status}</Badge>
       </div>
-      <p className="mt-2 text-sm font-medium text-neutral-900">
-        {canReviewQueue ? (
-          <Link
-            href={`/catalog/${request.datasetId}?tab=permissions`}
-            className="hover:underline"
-          >
-            {request.datasetName}
-          </Link>
-        ) : (
-          request.datasetName
-        )}
-      </p>
-      <p className="mt-1 text-sm text-neutral-600">{request.reason}</p>
+      <p className="mt-2 text-sm text-neutral-600">{request.reason}</p>
       <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-4">
         <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-neutral-500">
-          <span>{request.requestedRole}</span>
           <span>{formatDateTime(request.createdAt)}</span>
         </div>
         {canReviewQueue ? <EditAccessTrigger onClick={onEdit} /> : null}
