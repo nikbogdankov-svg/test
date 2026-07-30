@@ -132,7 +132,6 @@ export function DatasetTable({ datasets, query }: DatasetTableProps) {
         <span>
           Showing {datasets.length} dataset{datasets.length === 1 ? "" : "s"}
         </span>
-        <span>Sorted for enterprise discovery density</span>
       </div>
     </div>
   );

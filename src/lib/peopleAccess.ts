@@ -38,7 +38,7 @@ function directoryPeople(): Owner[] {
 }
 
 function displayLevel(level: PermissionLevel): PermissionLevel {
-  if (level === "restricted" || level === "none") return "viewer";
+  if (level === "none") return "viewer";
   return level;
 }
 
@@ -86,12 +86,21 @@ function accessForPersonOnDataset(
       entry.subjectType === "team" && entry.subject === person.team
   );
   if (teamGrant) {
+    // Team grants never make every member a personal owner — only the
+    // dataset owner record above gets Owner.
+    const level: PermissionLevel =
+      teamGrant.level === "owner" ? "editor" : displayLevel(teamGrant.level);
     return {
       datasetId: dataset.id,
       datasetName: dataset.name,
       department: dataset.owner.team,
-      level: displayLevel(teamGrant.level),
-      role: displayRole(teamGrant.role, teamGrant.level),
+      level,
+      role: displayRole(
+        teamGrant.role === "Owner" || teamGrant.role === "Data Steward"
+          ? "Editor"
+          : teamGrant.role,
+        level
+      ),
       source: "team",
     };
   }
@@ -119,6 +128,55 @@ export function buildPeopleAccessProfiles(
       ),
     };
   });
+}
+
+export interface DatasetPersonAccess {
+  person: Owner;
+  department: string;
+  level: PermissionLevel;
+  role: string;
+  source: "owner" | "team" | "user";
+}
+
+export function peopleWithAccessToDataset(
+  dataset: Dataset,
+  /** Effective permission of the person currently viewing the catalog. */
+  viewer?: { person: Owner; level: PermissionLevel }
+): DatasetPersonAccess[] {
+  const granted = directoryPeople()
+    .map((person) => {
+      const access = accessForPersonOnDataset(person, dataset);
+      if (!access) return null;
+      return {
+        person,
+        department: person.team,
+        level: access.level,
+        role: access.role,
+        source: access.source,
+      };
+    })
+    .filter((item): item is DatasetPersonAccess => item !== null);
+
+  if (viewer && viewer.level !== "none") {
+    const existing = granted.find(
+      (item) => item.person.email === viewer.person.email
+    );
+    if (existing) {
+      // Prefer the viewer's effective catalog permission over inherited team grants.
+      existing.level = viewer.level;
+      existing.role = displayRole("", viewer.level);
+    } else {
+      granted.push({
+        person: viewer.person,
+        department: viewer.person.team,
+        level: viewer.level,
+        role: displayRole("", viewer.level),
+        source: "user",
+      });
+    }
+  }
+
+  return granted.sort((a, b) => a.person.name.localeCompare(b.person.name));
 }
 
 /** Datasets this persona may request — not already visible via ACL. */

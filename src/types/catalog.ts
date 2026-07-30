@@ -4,16 +4,11 @@ export type DatasetType =
   | "pipeline"
   | "vector_collection";
 
-export type TrustLevel = "verified" | "on_review" | "untrusted";
+export type TrustLevel = "trusted" | "on_review" | "untrusted";
 
 export type FreshnessStatus = "fresh" | "stale" | "outdated" | "unknown";
 
-export type PermissionLevel =
-  | "owner"
-  | "editor"
-  | "viewer"
-  | "restricted"
-  | "none";
+export type PermissionLevel = "owner" | "editor" | "viewer" | "none";
 
 export type CertificationStatus =
   | "certified"

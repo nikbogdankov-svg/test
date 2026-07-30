@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { CertificationBadge } from "@/components/badges/CertificationBadge";
 import { OwnerAvatar } from "@/components/badges/OwnerAvatar";
+import { PermissionBadge } from "@/components/badges/PermissionBadge";
 import { TrustBadge } from "@/components/badges/TrustBadge";
 import { RequestAccessDialog } from "@/components/dataset/RequestAccessDialog";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +19,8 @@ import { Button } from "@/components/ui/button";
 import { usePersona } from "@/hooks/usePersona";
 import { currentTenant } from "@/data/users";
 import { formatDateTime } from "@/lib/format";
+import { peopleWithAccessToDataset } from "@/lib/peopleAccess";
+import { personaToOwner } from "@/data/personas";
 import type { Dataset } from "@/types/catalog";
 
 interface DatasetHeaderProps {
@@ -28,14 +31,23 @@ export function DatasetHeader({ dataset }: DatasetHeaderProps) {
   const { persona } = usePersona();
   const [copied, setCopied] = useState(false);
   const caps = persona.capabilities;
+  const people = peopleWithAccessToDataset(dataset, {
+    person: personaToOwner(persona),
+    level: dataset.permission,
+  });
+  const myAccess = people.find(
+    (access) => access.person.email === persona.email
+  );
+  const myPermission = myAccess?.level ?? dataset.permission;
+  const alreadyHasAccess = myPermission !== "none";
   const needsAccess =
     caps.canRequestAccess &&
-    (dataset.permission === "restricted" || dataset.permission === "none");
+    !alreadyHasAccess &&
+    dataset.permission === "none";
   const safeForAi =
     dataset.certification === "certified" &&
-    dataset.trust === "verified" &&
-    dataset.permission !== "restricted" &&
-    dataset.permission !== "none";
+    dataset.trust === "trusted" &&
+    alreadyHasAccess;
 
   async function copyApi() {
     await navigator.clipboard.writeText(dataset.apiEndpoint);
@@ -66,6 +78,7 @@ export function DatasetHeader({ dataset }: DatasetHeaderProps) {
                 </h1>
                 <CertificationBadge status={dataset.certification} />
                 <TrustBadge level={dataset.trust} />
+                <PermissionBadge level={myPermission} />
                 {dataset.containsPii ? (
                   <Badge variant="danger">PII</Badge>
                 ) : null}

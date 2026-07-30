@@ -206,7 +206,6 @@ export function DatasetDetailView({ dataset }: { dataset: Dataset }) {
           <PermissionsPanel
             datasetId={dataset.id}
             datasetName={dataset.name}
-            permissions={dataset.permissions}
             pendingRequests={dataset.pendingRequests}
           />
         </TabsContent>

@@ -78,7 +78,7 @@ export const personas: Persona[] = [
     homePath: "/catalog",
     navKeys: ["catalog", "requests"],
     capabilities: {
-      canRegister: false,
+      canRegister: true,
       canImport: false,
       canManageTeams: false,
       canViewAudit: false,

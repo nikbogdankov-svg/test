@@ -8,7 +8,6 @@ const config: Record<
   owner: { label: "Owner", variant: "success" },
   editor: { label: "Editor", variant: "info" },
   viewer: { label: "Viewer", variant: "muted" },
-  restricted: { label: "Restricted", variant: "warning" },
   none: { label: "No access", variant: "danger" },
 };
 

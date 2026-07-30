@@ -10,7 +10,7 @@ const config: Record<
     icon: typeof ShieldCheck;
   }
 > = {
-  verified: { label: "Verified", variant: "success", icon: ShieldCheck },
+  trusted: { label: "Trusted", variant: "success", icon: ShieldCheck },
   on_review: { label: "On review", variant: "warning", icon: ShieldQuestion },
   untrusted: { label: "Untrusted", variant: "danger", icon: ShieldX },
 };

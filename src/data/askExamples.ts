@@ -20,7 +20,7 @@ export const askExamples: AskExample[] = [
       {
         datasetId: "ds-citizen-registry",
         datasetName: "Citizen Registry",
-        note: "Certified golden record · trust verified · freshness within 2 hours",
+        note: "Certified golden record · Trusted · freshness within 2 hours",
       },
     ],
     permissionNote:

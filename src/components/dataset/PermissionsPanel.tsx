@@ -1,27 +1,41 @@
+"use client";
+
 import { OwnerAvatar } from "@/components/badges/OwnerAvatar";
 import { PermissionBadge } from "@/components/badges/PermissionBadge";
 import { MetadataCard } from "@/components/dataset/MetadataCard";
 import { RequestAccessDialog } from "@/components/dataset/RequestAccessDialog";
 import { Badge } from "@/components/ui/badge";
+import { datasets } from "@/data/datasets";
+import { personaToOwner } from "@/data/personas";
+import { usePersona } from "@/hooks/usePersona";
 import { formatDateTime } from "@/lib/format";
-import type { AccessRequest, PermissionEntry } from "@/types/catalog";
+import { peopleWithAccessToDataset } from "@/lib/peopleAccess";
+import type { AccessRequest } from "@/types/catalog";
 
 interface PermissionsPanelProps {
   datasetId: string;
   datasetName: string;
-  permissions: PermissionEntry[];
   pendingRequests: AccessRequest[];
 }
 
 export function PermissionsPanel({
   datasetId,
   datasetName,
-  permissions,
   pendingRequests,
 }: PermissionsPanelProps) {
-  const users = permissions.filter((item) => item.subjectType === "user");
-  const teams = permissions.filter((item) => item.subjectType === "team");
-  const roles = permissions.filter((item) => item.subjectType === "role");
+  const { persona } = usePersona();
+  const dataset = datasets.find((item) => item.id === datasetId);
+  const people = dataset
+    ? peopleWithAccessToDataset(dataset, {
+        person: personaToOwner(persona),
+        level: dataset.permission,
+      })
+    : [];
+  const alreadyHasAccess = people.some(
+    (access) => access.person.email === persona.email
+  );
+  const canRequest =
+    persona.capabilities.canRequestAccess && !alreadyHasAccess;
 
   return (
     <div className="space-y-4">
@@ -31,17 +45,49 @@ export function PermissionsPanel({
             Access control
           </h3>
           <p className="text-sm text-neutral-500">
-            Users, teams, roles and pending access requests.
+            People who can access this dataset, and pending requests.
           </p>
         </div>
-        <RequestAccessDialog datasetId={datasetId} datasetName={datasetName} />
+        {canRequest ? (
+          <RequestAccessDialog
+            datasetId={datasetId}
+            datasetName={datasetName}
+          />
+        ) : null}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-        <PermissionGroup title="Users" items={users} empty="No direct user grants." />
-        <PermissionGroup title="Teams" items={teams} empty="No team grants." />
-        <PermissionGroup title="Roles" items={roles} empty="No role grants." />
-      </div>
+      <MetadataCard title={`${people.length} people with access`}>
+        {people.length === 0 ? (
+          <p className="text-sm text-neutral-500">
+            No people currently have access to this dataset.
+          </p>
+        ) : (
+          <ul className="space-y-2">
+            {people.map((access) => (
+              <li
+                key={access.person.email}
+                className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-neutral-200 px-3 py-2.5"
+              >
+                <OwnerAvatar
+                  owner={access.person}
+                  subtitle={access.department}
+                  size="md"
+                />
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <PermissionBadge level={access.level} />
+                  <Badge variant="muted">
+                    {access.source === "owner"
+                      ? "Dataset owner"
+                      : access.source === "team"
+                        ? "Via department"
+                        : "Direct grant"}
+                  </Badge>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </MetadataCard>
 
       <MetadataCard title="Pending requests">
         {pendingRequests.length === 0 ? (
@@ -54,12 +100,16 @@ export function PermissionsPanel({
                 className="rounded-md border border-neutral-200 px-3 py-2.5"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <OwnerAvatar owner={request.requester} />
+                  <OwnerAvatar
+                    owner={request.requester}
+                    subtitle={request.requester.team}
+                    size="md"
+                  />
                   <Badge variant="warning">{request.status}</Badge>
                 </div>
                 <p className="mt-2 text-sm text-neutral-700">{request.reason}</p>
                 <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-xs text-neutral-500">
-                  <span>Role · {request.requestedRole}</span>
+                  <span>{request.requestedRole}</span>
                   <span>{formatDateTime(request.createdAt)}</span>
                 </div>
               </li>
@@ -68,43 +118,5 @@ export function PermissionsPanel({
         )}
       </MetadataCard>
     </div>
-  );
-}
-
-function PermissionGroup({
-  title,
-  items,
-  empty,
-}: {
-  title: string;
-  items: PermissionEntry[];
-  empty: string;
-}) {
-  return (
-    <MetadataCard title={title}>
-      {items.length === 0 ? (
-        <p className="text-sm text-neutral-500">{empty}</p>
-      ) : (
-        <ul className="space-y-2">
-          {items.map((item) => (
-            <li
-              key={item.id}
-              className="rounded-md border border-neutral-200 px-3 py-2"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-sm font-medium text-neutral-900">
-                  {item.subject}
-                </p>
-                <PermissionBadge level={item.level} />
-              </div>
-              <p className="mt-1 text-xs text-neutral-500">
-                {item.role} · granted {formatDateTime(item.grantedAt)} by{" "}
-                {item.grantedBy}
-              </p>
-            </li>
-          ))}
-        </ul>
-      )}
-    </MetadataCard>
   );
 }

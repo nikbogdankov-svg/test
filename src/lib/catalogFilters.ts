@@ -41,7 +41,7 @@ export const CERTIFICATION_LABELS: Record<CertificationStatus, string> = {
 };
 
 export const TRUST_LABELS: Record<TrustLevel, string> = {
-  verified: "Verified",
+  trusted: "Trusted",
   on_review: "On review",
   untrusted: "Untrusted",
 };

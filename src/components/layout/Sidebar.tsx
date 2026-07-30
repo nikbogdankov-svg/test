@@ -30,9 +30,18 @@ export function Sidebar() {
   const pathname = usePathname();
   const { persona } = usePersona();
   const { open, setOpen } = useSidebar();
-  const visibleNav = navItems.filter((item) =>
-    persona.navKeys.includes(item.key)
-  );
+  const canManageAccess =
+    persona.capabilities.canManageTeams || persona.capabilities.canViewAudit;
+  const visibleNav = navItems
+    .filter((item) => persona.navKeys.includes(item.key))
+    .map((item) =>
+      item.key === "requests"
+        ? {
+            ...item,
+            label: canManageAccess ? "Access" : "Requests",
+          }
+        : item
+    );
 
   return (
     <aside
