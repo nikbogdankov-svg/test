@@ -19,7 +19,6 @@ export const AUDIT_EVENT_TYPE_LABELS: Record<AuditEventType, string> = {
   permission_granted: "Permission granted",
   permission_revoked: "Permission revoked",
   viewed_by_ai: "Viewed by AI",
-  certified: "Certified",
   updated: "Updated",
 };
 

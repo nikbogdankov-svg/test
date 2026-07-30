@@ -10,12 +10,6 @@ export type FreshnessStatus = "fresh" | "stale" | "outdated" | "unknown";
 
 export type PermissionLevel = "owner" | "editor" | "viewer" | "none";
 
-export type CertificationStatus =
-  | "certified"
-  | "pending"
-  | "deprecated"
-  | "uncertified";
-
 export type OriginalityStatus = "original" | "duplicate";
 
 export type AccessRequestStatus = "pending" | "approved" | "rejected";
@@ -105,7 +99,6 @@ export interface AuditEvent {
     | "permission_granted"
     | "permission_revoked"
     | "viewed_by_ai"
-    | "certified"
     | "updated";
   title: string;
   description: string;
@@ -149,7 +142,6 @@ export interface Dataset {
   trust: TrustLevel;
   freshness: FreshnessStatus;
   permission: PermissionLevel;
-  certification: CertificationStatus;
   originality: OriginalityStatus;
   containsPii: boolean;
   sourceSystem: string;
@@ -175,7 +167,6 @@ export interface Dataset {
 
 export interface CatalogStats {
   totalDatasets: number;
-  certifiedDatasets: number;
   pendingAccessRequests: number;
   piiDatasets: number;
   averageQualityScore: number;
@@ -188,7 +179,6 @@ export type QuickFilter =
   | "documents"
   | "pipelines"
   | "vector_collections"
-  | "certified"
   | "contains_pii"
   | "owned_by_me"
   | "recently_updated";
@@ -239,7 +229,6 @@ export interface PersonaCapabilities {
   canOpenNotebook: boolean;
   canViewLineage: boolean;
   seesAskHome: boolean;
-  certifiedOnlyInCatalog: boolean;
 }
 
 export interface Persona {

@@ -18,12 +18,6 @@ export function visibleDatasetsForPersona(
         return false;
       }
     }
-    if (
-      persona.capabilities.certifiedOnlyInCatalog &&
-      dataset.certification !== "certified"
-    ) {
-      return false;
-    }
     return true;
   });
 }

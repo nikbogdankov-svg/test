@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { CertificationBadge } from "@/components/badges/CertificationBadge";
 import { FreshnessBadge } from "@/components/badges/FreshnessBadge";
 import { OriginalityBadge } from "@/components/badges/OriginalityBadge";
 import { OwnerAvatar } from "@/components/badges/OwnerAvatar";
@@ -32,9 +31,6 @@ export function DatasetRow({ dataset, query }: DatasetRowProps) {
               <span className="text-sm font-medium text-neutral-900">
                 <HighlightText text={dataset.name} query={query} />
               </span>
-              {dataset.certification === "certified" ? (
-                <CertificationBadge status={dataset.certification} />
-              ) : null}
               {dataset.containsPii ? (
                 <Badge variant="danger">PII</Badge>
               ) : null}

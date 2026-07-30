@@ -131,8 +131,8 @@ export const notifications: NotificationItem[] = [
   },
   {
     id: "n3",
-    title: "Certification renewed",
-    description: "Citizen Registry certified through 2027-01-15.",
+    title: "Trust status updated",
+    description: "Citizen Registry marked trusted through 2027-01-15.",
     timestamp: "2026-07-27T16:20:00Z",
     read: true,
   },

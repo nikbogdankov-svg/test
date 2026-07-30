@@ -9,7 +9,6 @@ const filters: { id: QuickFilter; label: string }[] = [
   { id: "documents", label: "Documents" },
   { id: "pipelines", label: "Pipelines" },
   { id: "vector_collections", label: "Vector Collections" },
-  { id: "certified", label: "Certified" },
   { id: "contains_pii", label: "Contains PII" },
   { id: "owned_by_me", label: "Owned by me" },
   { id: "recently_updated", label: "Recently Updated" },

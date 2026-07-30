@@ -20,11 +20,11 @@ export const askExamples: AskExample[] = [
       {
         datasetId: "ds-citizen-registry",
         datasetName: "Citizen Registry",
-        note: "Certified golden record · Trusted · freshness within 2 hours",
+        note: "Golden record · Trusted · freshness within 2 hours",
       },
     ],
     permissionNote:
-      "Answer uses only certified datasets you are permitted to see as Executive Office.",
+      "Answer uses only governed datasets you are permitted to see as Executive Office.",
   },
   {
     id: "q-permits",
@@ -35,7 +35,7 @@ export const askExamples: AskExample[] = [
       {
         datasetId: "ds-building-permits",
         datasetName: "Building Permits",
-        note: "Certified operational ledger · near real-time updates",
+        note: "Operational ledger · near real-time updates",
       },
       {
         datasetId: "ds-urban-planning",
@@ -55,11 +55,11 @@ export const askExamples: AskExample[] = [
       {
         datasetId: "ds-finance-budget",
         datasetName: "Finance Budget",
-        note: "Certified FI-CO mart · daily actuals",
+        note: "FI-CO mart · daily actuals",
       },
     ],
     permissionNote:
-      "Budget figures are from certified Finance datasets available to the Executive Office.",
+      "Budget figures are from Finance datasets available to the Executive Office.",
   },
   {
     id: "q-transit",
@@ -70,7 +70,7 @@ export const askExamples: AskExample[] = [
       {
         datasetId: "ds-public-transport",
         datasetName: "Public Transport",
-        note: "Certified GTFS-RT feed · passenger information grade",
+        note: "GTFS-RT feed · passenger information grade",
       },
       {
         datasetId: "ds-transport-sensors",

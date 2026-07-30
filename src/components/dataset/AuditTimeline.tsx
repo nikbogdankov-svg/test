@@ -1,5 +1,4 @@
 import {
-  BadgeCheck,
   Eye,
   FilePlus2,
   KeyRound,
@@ -20,7 +19,6 @@ const icons = {
   permission_granted: KeyRound,
   permission_revoked: KeySquare,
   viewed_by_ai: Eye,
-  certified: BadgeCheck,
   updated: PencilLine,
 };
 

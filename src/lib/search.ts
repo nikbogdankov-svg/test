@@ -106,8 +106,6 @@ export function matchesQuickFilter(
       return dataset.type === "pipeline";
     case "vector_collections":
       return dataset.type === "vector_collection";
-    case "certified":
-      return dataset.certification === "certified";
     case "contains_pii":
       return dataset.containsPii;
     case "owned_by_me":

@@ -9,11 +9,14 @@ import {
   Check,
   NotebookPen,
 } from "lucide-react";
-import { CertificationBadge } from "@/components/badges/CertificationBadge";
 import { OwnerAvatar } from "@/components/badges/OwnerAvatar";
 import { PermissionBadge } from "@/components/badges/PermissionBadge";
 import { TrustBadge } from "@/components/badges/TrustBadge";
 import { DatasetTypeIcon } from "@/components/catalog/DatasetTypeIcon";
+import {
+  EditMetadataDialog,
+  type DatasetMetadataUpdate,
+} from "@/components/dataset/EditMetadataDialog";
 import { RequestAccessDialog } from "@/components/dataset/RequestAccessDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -26,9 +29,13 @@ import type { Dataset } from "@/types/catalog";
 
 interface DatasetHeaderProps {
   dataset: Dataset;
+  onMetadataSave?: (update: DatasetMetadataUpdate) => void;
 }
 
-export function DatasetHeader({ dataset }: DatasetHeaderProps) {
+export function DatasetHeader({
+  dataset,
+  onMetadataSave,
+}: DatasetHeaderProps) {
   const { persona } = usePersona();
   const [copied, setCopied] = useState(false);
   const caps = persona.capabilities;
@@ -41,14 +48,13 @@ export function DatasetHeader({ dataset }: DatasetHeaderProps) {
   );
   const myPermission = myAccess?.level ?? dataset.permission;
   const alreadyHasAccess = myPermission !== "none";
+  const canEditMetadata =
+    myPermission === "owner" || myPermission === "editor";
   const needsAccess =
     caps.canRequestAccess &&
     !alreadyHasAccess &&
     dataset.permission === "none";
-  const safeForAi =
-    dataset.certification === "certified" &&
-    dataset.trust === "trusted" &&
-    alreadyHasAccess;
+  const safeForAi = dataset.trust === "trusted" && alreadyHasAccess;
 
   async function copyApi() {
     await navigator.clipboard.writeText(dataset.apiEndpoint);
@@ -73,33 +79,44 @@ export function DatasetHeader({ dataset }: DatasetHeaderProps) {
       <div className="rounded-lg border border-neutral-200 bg-white p-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
-                  {dataset.name}
-                </h1>
-                <DatasetTypeIcon type={dataset.type} />
-                <CertificationBadge status={dataset.certification} />
-                <TrustBadge level={dataset.trust} />
-                <PermissionBadge level={myPermission} />
-                {dataset.containsPii ? (
-                  <Badge variant="danger">PII</Badge>
-                ) : null}
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
+                {dataset.name}
+              </h1>
+              <DatasetTypeIcon type={dataset.type} />
+              <TrustBadge level={dataset.trust} />
+              <PermissionBadge level={myPermission} />
+              {dataset.containsPii ? (
+                <Badge variant="danger">PII</Badge>
+              ) : null}
+            </div>
+            <p className="mt-2 max-w-3xl text-sm text-neutral-600">
+              {dataset.description}
+            </p>
+            {dataset.tags.length > 0 ? (
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {dataset.tags.map((tag) => (
+                  <Badge key={tag} variant="muted">
+                    {tag}
+                  </Badge>
+                ))}
               </div>
-              <p className="mt-2 max-w-3xl text-sm text-neutral-600">
-                {dataset.description}
-              </p>
-              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-neutral-600">
-                <OwnerAvatar owner={dataset.owner} />
-                <span>Updated {formatDateTime(dataset.updatedAt)}</span>
-                <span>Trust score · {dataset.quality.score.toFixed(1)}</span>
-              </div>
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                <Badge variant="muted">{currentTenant.name}</Badge>
-                <Badge variant="muted">{dataset.owner.team}</Badge>
-              </div>
+            ) : null}
+            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-neutral-600">
+              <OwnerAvatar owner={dataset.owner} />
+              <span>Updated {formatDateTime(dataset.updatedAt)}</span>
+              <span>Trust score · {dataset.quality.score.toFixed(1)}</span>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              <Badge variant="muted">Tenant: {currentTenant.name}</Badge>
+              <Badge variant="muted">Department: {dataset.owner.team}</Badge>
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-2">
+            {canEditMetadata && onMetadataSave ? (
+              <EditMetadataDialog dataset={dataset} onSave={onMetadataSave} />
+            ) : null}
             {needsAccess ? (
               <RequestAccessDialog
                 datasetId={dataset.id}
@@ -152,9 +169,7 @@ export function DatasetHeader({ dataset }: DatasetHeaderProps) {
                 <Copy className="h-3.5 w-3.5" />
               )}
             </Button>
-            {safeForAi ? (
-              <Badge variant="success">Safe for AI</Badge>
-            ) : null}
+            {safeForAi ? <Badge variant="success">Safe for AI</Badge> : null}
           </div>
         ) : null}
       </div>

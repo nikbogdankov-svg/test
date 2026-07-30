@@ -12,7 +12,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  CERTIFICATION_LABELS,
   DATASET_TYPE_LABELS,
   FRESHNESS_LABELS,
   TRUST_LABELS,
@@ -51,10 +50,6 @@ export function CatalogFilters({
 
   const types = Array.from(
     new Set(datasets.map((dataset) => dataset.type))
-  ).sort((a, b) => a.localeCompare(b));
-
-  const certifications = Array.from(
-    new Set(datasets.map((dataset) => dataset.certification))
   ).sort((a, b) => a.localeCompare(b));
 
   const trusts = Array.from(
@@ -120,28 +115,6 @@ export function CatalogFilters({
             {types.map((type) => (
               <SelectItem key={type} value={type}>
                 {DATASET_TYPE_LABELS[type]}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </FilterField>
-
-      <FilterField label="Certification">
-        <Select
-          value={facets.certification}
-          onValueChange={(value) => onChange("certification", value)}
-        >
-          <SelectTrigger
-            className="w-full"
-            aria-label="Filter by certification"
-          >
-            <SelectValue placeholder="All certifications" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All certifications</SelectItem>
-            {certifications.map((status) => (
-              <SelectItem key={status} value={status}>
-                {CERTIFICATION_LABELS[status]}
               </SelectItem>
             ))}
           </SelectContent>

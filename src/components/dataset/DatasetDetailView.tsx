@@ -57,6 +57,11 @@ export function DatasetDetailView({ dataset }: { dataset: Dataset }) {
   const [tab, setTab] = useState<TabId>(
     availableTabs.includes(initialTab) ? initialTab : availableTabs[0]
   );
+  const [draft, setDraft] = useState(dataset);
+
+  useEffect(() => {
+    setDraft(dataset);
+  }, [dataset]);
 
   useEffect(() => {
     if (!availableTabs.includes(tab)) {
@@ -66,11 +71,11 @@ export function DatasetDetailView({ dataset }: { dataset: Dataset }) {
 
   const metadataItems = useMemo(
     () =>
-      Object.entries(dataset.metadata).map(([label, value]) => ({
+      Object.entries(draft.metadata).map(([label, value]) => ({
         label,
         value,
       })),
-    [dataset.metadata]
+    [draft.metadata]
   );
 
   function changeTab(next: string) {
@@ -79,14 +84,23 @@ export function DatasetDetailView({ dataset }: { dataset: Dataset }) {
     setTab(value);
     const params = new URLSearchParams(searchParams.toString());
     params.set("tab", value);
-    router.replace(`/catalog/${dataset.id}?${params.toString()}`, {
+    router.replace(`/catalog/${draft.id}?${params.toString()}`, {
       scroll: false,
     });
   }
 
   return (
     <div className="space-y-5">
-      <DatasetHeader dataset={dataset} />
+      <DatasetHeader
+        dataset={draft}
+        onMetadataSave={(update) => {
+          setDraft((current) => ({
+            ...current,
+            ...update,
+            updatedAt: new Date().toISOString(),
+          }));
+        }}
+      />
 
       <Tabs value={tab} onValueChange={changeTab}>
         <TabsList aria-label="Dataset sections">
@@ -117,32 +131,32 @@ export function DatasetDetailView({ dataset }: { dataset: Dataset }) {
           <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
             <MetadataCard title="Business description" className="xl:col-span-2">
               <p className="text-sm leading-relaxed text-neutral-700">
-                {dataset.businessDescription}
+                {draft.businessDescription}
               </p>
             </MetadataCard>
             <MetadataCard title="Key facts">
               <MetadataGrid
                 items={[
-                  { label: "Source system", value: dataset.sourceSystem },
+                  { label: "Source system", value: draft.sourceSystem },
                   {
                     label: "Data owner",
-                    value: <OwnerAvatar owner={dataset.owner} />,
+                    value: <OwnerAvatar owner={draft.owner} />,
                   },
                   {
                     label: "Update frequency",
-                    value: dataset.updateFrequency,
+                    value: draft.updateFrequency,
                   },
                   {
                     label: "Rows",
-                    value: formatNumber(dataset.rowCount),
+                    value: formatNumber(draft.rowCount),
                   },
                   {
                     label: "Size",
-                    value: formatBytes(dataset.sizeBytes),
+                    value: formatBytes(draft.sizeBytes),
                   },
                   {
                     label: "Created",
-                    value: formatDateTime(dataset.createdAt),
+                    value: formatDateTime(draft.createdAt),
                   },
                 ]}
               />
@@ -152,7 +166,7 @@ export function DatasetDetailView({ dataset }: { dataset: Dataset }) {
           <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
             <MetadataCard title="Consumers">
               <div className="flex flex-wrap gap-1.5">
-                {dataset.consumers.map((consumer) => (
+                {draft.consumers.map((consumer) => (
                   <Badge key={consumer} variant="default">
                     {consumer}
                   </Badge>
@@ -161,12 +175,12 @@ export function DatasetDetailView({ dataset }: { dataset: Dataset }) {
             </MetadataCard>
             <MetadataCard title="AI applications">
               <div className="flex flex-wrap gap-1.5">
-                {dataset.aiApplications.length === 0 ? (
+                {draft.aiApplications.length === 0 ? (
                   <span className="text-sm text-neutral-500">
                     No AI applications linked.
                   </span>
                 ) : (
-                  dataset.aiApplications.map((app) => (
+                  draft.aiApplications.map((app) => (
                     <Badge key={app} variant="info">
                       {app}
                     </Badge>
@@ -179,40 +193,40 @@ export function DatasetDetailView({ dataset }: { dataset: Dataset }) {
             </MetadataCard>
           </div>
 
-          <QualityPanel quality={dataset.quality} />
+          <QualityPanel quality={draft.quality} />
         </TabsContent>
 
         <TabsContent value="schema">
-          <SchemaTable columns={dataset.columns} />
+          <SchemaTable columns={draft.columns} />
         </TabsContent>
 
         <TabsContent value="lineage">
           <LineageGraph
-            nodes={dataset.lineage.nodes}
-            edges={dataset.lineage.edges}
+            nodes={draft.lineage.nodes}
+            edges={draft.lineage.edges}
           />
         </TabsContent>
 
         <TabsContent value="permissions">
           <PermissionsPanel
-            datasetId={dataset.id}
-            datasetName={dataset.name}
-            pendingRequests={dataset.pendingRequests}
+            datasetId={draft.id}
+            datasetName={draft.name}
+            pendingRequests={draft.pendingRequests}
           />
         </TabsContent>
 
         <TabsContent value="quality">
-          <QualityPanel quality={dataset.quality} />
+          <QualityPanel quality={draft.quality} />
         </TabsContent>
 
         <TabsContent value="audit">
           <MetadataCard title="Audit timeline">
-            <AuditTimeline events={dataset.audit} />
+            <AuditTimeline events={draft.audit} />
           </MetadataCard>
         </TabsContent>
 
         <TabsContent value="usage">
-          <UsageCharts usage={dataset.usage} />
+          <UsageCharts usage={draft.usage} />
         </TabsContent>
       </Tabs>
     </div>

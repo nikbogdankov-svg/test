@@ -22,7 +22,6 @@ export const personas: Persona[] = [
       canOpenNotebook: false,
       canViewLineage: false,
       seesAskHome: true,
-      certifiedOnlyInCatalog: true,
     },
     teamAccess: "all",
     visibleDomains: [
@@ -57,7 +56,6 @@ export const personas: Persona[] = [
       canOpenNotebook: true,
       canViewLineage: true,
       seesAskHome: false,
-      certifiedOnlyInCatalog: false,
     },
     // Departmental users only see datasets owned by their own department.
     teamAccess: ["Citizen Services"],
@@ -87,7 +85,6 @@ export const personas: Persona[] = [
       canOpenNotebook: true,
       canViewLineage: true,
       seesAskHome: false,
-      certifiedOnlyInCatalog: false,
     },
     // Departmental users only see datasets owned by their own department.
     teamAccess: ["Urban Planning"],
@@ -117,7 +114,6 @@ export const personas: Persona[] = [
       canOpenNotebook: false,
       canViewLineage: true,
       seesAskHome: false,
-      certifiedOnlyInCatalog: false,
     },
     teamAccess: "all",
     visibleDomains: "all",
@@ -146,7 +142,6 @@ export const personas: Persona[] = [
       canOpenNotebook: false,
       canViewLineage: false,
       seesAskHome: false,
-      certifiedOnlyInCatalog: false,
     },
     teamAccess: "all",
     visibleDomains: "all",
