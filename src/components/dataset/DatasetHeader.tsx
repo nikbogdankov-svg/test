@@ -93,15 +93,6 @@ export function DatasetHeader({
             <p className="mt-2 max-w-3xl text-sm text-neutral-600">
               {dataset.description}
             </p>
-            {dataset.tags.length > 0 ? (
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                {dataset.tags.map((tag) => (
-                  <Badge key={tag} variant="muted">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            ) : null}
             <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-neutral-600">
               <OwnerAvatar owner={dataset.owner} />
               <span>Updated {formatDateTime(dataset.updatedAt)}</span>
