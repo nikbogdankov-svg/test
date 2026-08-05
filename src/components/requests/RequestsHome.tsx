@@ -30,8 +30,7 @@ import type { AccessRequest } from "@/types/catalog";
 export function RequestsHome() {
   const { persona } = usePersona();
   const canRequest = persona.capabilities.canRequestAccess;
-  const canReviewQueue =
-    persona.capabilities.canManageTeams || persona.capabilities.canViewAudit;
+  const canReviewQueue = persona.capabilities.canManageTeams;
 
   const baseProfiles = useMemo(() => buildPeopleAccessProfiles(datasets), []);
 

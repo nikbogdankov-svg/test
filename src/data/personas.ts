@@ -131,7 +131,7 @@ export const personas: Persona[] = [
     avatarInitials: "CD",
     avatarColor: "#4B5563",
     homePath: "/catalog",
-    navKeys: ["catalog", "requests", "audit"],
+    navKeys: ["catalog", "audit"],
     capabilities: {
       canRegister: false,
       canImport: false,
